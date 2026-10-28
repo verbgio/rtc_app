@@ -112,6 +112,218 @@ const List<Map<String, String>> PROGRAMMI = [
     'titolo': 'Gavin Bryars in Toscana',
     'feed': 'https://www.retetoscanaclassica.it/feed/podcast/bryarstoscano',
   },
+  {
+    'titolo': 'Gershwin: Porgy and Bess e il Song-Book del 1932',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/gershwin-porgy-bess',
+  },
+  {
+    'titolo': 'Giacomo Puccini: testimonianze, lettere, esecuzioni',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/puccinitestimonianze',
+  },
+  {
+    'titolo': 'Gioachino Rossini 150',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/rossini150',
+  },
+  {
+    'titolo': 'Gli antenati di Giacomo Puccini',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/antenatipuccini',
+  },
+  {
+    'titolo': 'Haendel: un poliglotta nell’Europa del ‘700',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/haendelpoliglotta700',
+  },
+  {
+    'titolo': 'Haydn musicista moderno',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/haydnmusicistamoderno',
+  },
+  {
+    'titolo': 'Hoffmann 250',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/hoffmann250',
+  },
+  {
+    'titolo': 'I 25 anni della Camerata strumentale',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/25camp',
+  },
+  {
+    'titolo': 'I nomi della musica: Francesco FIlidei',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/i-nomi-della-musica-francesco-filidei',
+  },
+  {
+    'titolo': 'Il cane da tartufi – Autori dimenticati',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/il-cane-da-tartufi-autori-dimenticati',
+  },
+  {
+    'titolo': 'Il Clavicembalo ben temperato. Un mito senza tempo',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/clavicembalosenzatempo',
+  },
+  {
+    'titolo': 'Il maestro già martellava il pianoforte – Vita e musica di Giacomo Puccini',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/maestropuccinivita',
+  },
+  {
+    'titolo': 'Il pianoforte ben temperato',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/il-pianoforte-ben-temperato',
+  },
+  {
+    'titolo': 'Il Suono dei secoli',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/il-suono-dei-secoli',
+  },
+  {
+    'titolo': 'Il teatro musicale di Ferruccio Busoni',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/il-teatro-musicale-di-ferruccio-busoni',
+  },
+  {
+    'titolo': 'L’antichità moderna di David Munrow',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/lantichita-moderna-di-david-munrow',
+  },
+  {
+    'titolo': 'L’occidente d’oro. Puccini e il Nuovo Mondo',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/loccidente-doro-puccini-e-il-nuovo-mondo',
+  },
+  {
+    'titolo': 'L’arte dei King’s Singers',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/kingssingers',
+  },
+  {
+    'titolo': 'L’arte invisibile',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/arteinvisibile',
+  },
+  {
+    'titolo': 'La musica per pianoforte di Prokof’ev',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/pianoforteprokofev',
+  },
+  {
+    'titolo': 'La poesia di Emily Dickinson e la musica americana del Novecento',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/emily-dickinson',
+  },
+  {
+    'titolo': 'La storia messa in musica',
+    'feed': '	https://www.retetoscanaclassica.it/feed/podcast/la-storia-messa-in-musica-antoni-gaudi',
+  },
+  {
+    'titolo': 'Le campane di Tosca',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/le-campane-di-tosca',
+  },
+  {
+    'titolo': 'Le origini del concerto pianistico',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/concertopianistico',
+  },
+  {
+    'titolo': 'Luce di Taglio',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/luceditaglio',
+  },
+  {
+    'titolo': 'Mulier Musica: Chiarina',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/chiarinaschumann',
+  },
+  {
+    'titolo': 'Mulier Musiche: Musica Celeste',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/muliermusiche',
+  },
+  {
+    'titolo': 'Music Comedies. Storia del teatro comico musicale inglese',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/music-comedies-storia-del-teatro-comico-musicale-inglese',
+  },
+  {
+    'titolo': 'Musica nova: voci innovative dal passato',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/musicanova',
+  },
+  {
+    'titolo': 'Nino Rota, cent’anni dopo',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/nino-rota-100',
+  },
+  {
+    'titolo': 'Notturnalia. Suoni per le ore buie',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/notturnalia',
+  },
+  {
+    'titolo': 'Novità in Compact',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/novitaincompact',
+  },
+  {
+    'titolo': 'Ombre Bianche',
+    'feed': '	https://www.retetoscanaclassica.it/feed/podcast/ombrebianche',
+  },
+  {
+    'titolo': 'Paolo Poli legge Pellegrino Artusi',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/paolo-poli-legge-pellegrino-artusi',
+  },
+  {
+    'titolo': 'Parliamo di Musica',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/parliamodimusica',
+  },
+  {
+    'titolo': 'Partiture D’Europa',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/partitureeuropa',
+  },
+  {
+    'titolo': 'Pensieri Urbani',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/pensieri-urbani',
+  },
+  {
+    'titolo': 'Per Luciano Berio',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/per-luciano-berio',
+  },
+  {
+    'titolo': 'Piccolo dizionario della musica classica',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/dizionariomusicaclassica',
+  },
+  {
+    'titolo': 'Poulenc: l’ispirazione è qualcosa di misterioso',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/poulencispirazionemisteriosa',
+  },
+  {
+    'titolo': 'Rachmaninov: acciaio nelle mani, oro nel cuore',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/rachmaninovacciaio',
+  },
+  {
+    'titolo': 'Reich – Un maestro della contemporaneità',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/reich-un-maestro-della-contemporaneita',
+  },
+  {
+    'titolo': 'Ricordo di Marc Blitzstein',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/blitzstein',
+  },
+  {
+    'titolo': 'Senti qui',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/senti-qui',
+  },
+  {
+    'titolo': 'Sylvano Bussotti: Vita e Teatro',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/bussottivitaeteatro',
+  },
+  {
+    'titolo': 'Toscana delle Culture',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/toscanadelleculture',
+  },
+  {
+    'titolo': 'Trame culturali',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/trameculturali',
+  },
+  {
+    'titolo': 'Tutto lo splendore della musica strumentale',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/tutto-lo-splendore-della-musica-strumentale',
+  },
+  {
+    'titolo': 'Tutto Verdi',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/tutto-verdi',
+  },
+  {
+    'titolo': 'Un Solennissimo Strombettio',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/unsolennissimostrombettio',
+  },
+  {
+    'titolo': 'Viaggio musicale nel secolo breve. Le sinfonie di Dmitrij Šostakovič',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/viaggio-musicale-nel-secolo-breve',
+  },
+  {
+    'titolo': 'Viaggio nel mondo di Gustav Mahler',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/viaggio-nel-mondo-di-gustav-mahler',
+  },
+  {
+    'titolo': 'Virtuosissime',
+    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/virtuosissime',
+  },
 ];
 // ========================================
 
