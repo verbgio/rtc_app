@@ -4,12 +4,10 @@ workflows:
     instance_type: mac_mini_m2
     integrations:
       app_store_connect: Rete Toscana Classica
-    environment:
       flutter: stable
       xcode: latest
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: it.retetoscanaclassica.myapp
+      groups:
+        - appstore_credentials
     scripts:
       - name: Set up code signing
         script: |
