@@ -6,6 +6,7 @@ workflows:
       flutter: stable
       xcode: latest
       ios_signing:
+        team_id: KR584D2J97
         provisioning_profiles:
           - rtc_app_store_profile
         certificates:
