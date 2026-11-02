@@ -9,7 +9,7 @@ workflows:
         - appstore_credentials
       ios_signing:
         provisioning_profiles:
-          - RTC App Store Profile
+          - rtc_app_store_profile
         certificates:
           - rtc_distribution
     scripts:
