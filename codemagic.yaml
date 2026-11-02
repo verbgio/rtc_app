@@ -1,14 +1,6 @@
 workflows:
   ios-workflow:
     name: iOS Workflow
-    scripts:
-      - name: Set up code signing
-        script: |
-          xcode-project use-profiles
-      - name: Build IPA
-        script: |
-          flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
-  
     instance_type: mac_mini_m2
     environment:
       flutter: stable
@@ -24,7 +16,8 @@ workflows:
           xcode-project use-profiles
       - name: Build IPA
         script: |
-          flutter build ipa --release
+          flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
+    
     artifacts:
       - build/ios/ipa/*.ipa
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.ipa
