@@ -8,12 +8,10 @@ workflows:
       groups:
         - appstore_credentials
       ios_signing:
-        distribution_type: app_store
-        bundle_identifier: it.retetoscanaclassica.myapp
         provisioning_profiles:
-          - rtc_app_store_profile # Metti il nome esatto del profilo che hai su Codemagic
+          - RTC App Store Profile
         certificates:
-          - rtc_distribution # Metti il nome esatto del certificato che hai su Codemagic
+          - rtc_distribution
     scripts:
       - name: Set up code signing
         script: |
