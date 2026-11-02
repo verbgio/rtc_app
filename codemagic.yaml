@@ -11,7 +11,7 @@ workflows:
         distribution_type: app_store
         bundle_identifier: it.retetoscanaclassica.myapp
         provisioning_profiles:
-          - RTC App Store Profile # Metti il nome esatto che hai dato su Codemagic
+          - rtc_app_store_profile # Metti il nome esatto del profilo che hai su Codemagic
         certificates:
           - rtc_distribution # Metti il nome esatto del certificato che hai su Codemagic
     scripts:
