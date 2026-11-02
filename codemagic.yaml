@@ -5,8 +5,6 @@ workflows:
     environment:
       flutter: stable
       xcode: latest
-      groups:
-        - appstore_credentials
       ios_signing:
         provisioning_profiles:
           - rtc_app_store_profile
