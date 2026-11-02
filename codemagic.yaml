@@ -1,12 +1,13 @@
 workflows:
   ios-workflow:
     name: iOS Workflow
+    script: |
+          flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
     instance_type: mac_mini_m2
     environment:
       flutter: stable
       xcode: latest
       ios_signing:
-        team_id: KR584D2J97
         provisioning_profiles:
           - rtc_app_store_profile
         certificates:
