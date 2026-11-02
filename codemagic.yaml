@@ -14,16 +14,11 @@ workflows:
       - name: Set up code signing
         script: |
           xcode-project use-profiles
-      - name: Build Archive
+      - name: Build IPA
         script: |
-          flutter build ipa --release --no-codesign
-      - name: Export IPA
-        script: |
-          xcodebuild -exportArchive \
-            -archivePath build/ios/archive/Runner.xcarchive \
-            -exportOptionsPlist ios/ExportOptions.plist \
-            -exportPath build/ios/ipa \
-            -allowProvisioningUpdates
+          xcode-project build-ipa \
+            --workspace "$CM_BUILD_DIR/ios/Runner.xcworkspace" \
+            --scheme "Runner"
     artifacts:
       - build/ios/ipa/*.ipa
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.ipa
