@@ -1,17 +1,9 @@
 # rtc_app
 
-A new Flutter project.
+Questa è la app di Rete Toscana Classica
 
-## Getting Started
+## Cos'è
 
-This project is a starting point for a Flutter application.
+La app di Rete Toscana Classica permette di ascoltare in streaming la radio e i podcast pubblicati sul nostro sito ufficiale: www.retetoscanaclassica.it
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Per informazioni contattateci all'indirizzo email info@retetoscanaclassica.it

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -14,317 +15,7 @@ const String RADIO_NAME = 'RTC';
 const Color BRAND_BLUE = Color.fromARGB(255, 4, 118, 248);
 const Color BRAND_LIGHT_BLUE = Color.fromARGB(255, 246, 247, 248);
 
-// Programmi podcast: aggiungi/rimuovi voci qui quando vuoi
-const List<Map<String, String>> PROGRAMMI = [
-  {
-    'titolo': 'Alla ricerca di Maurice Ravel',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/ricercaravel',
-  },
-  {
-    'titolo': 'Almanaccare',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/almanaccare',
-  },
-  {
-    'titolo': 'Attraverso i suoni',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/attraverso-i-suoni',
-  },
-  {
-    'titolo': 'Auguri, Sir Paul!',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/sir-paul',
-  },
-  {
-    'titolo': 'Beethoven 250 – Altre composizioni',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/beethoven250altro',
-  },
-  {
-    'titolo': 'Beethoven 250 – I Quartetti d’archi',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/beethoven250quartetti',
-  },
-  {
-    'titolo': 'Beethoven 250 – Il pianoforte',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/beethoven250piano',
-  },
-  {
-    'titolo': 'Beethoven 250 – Le Sinfonie',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/beethoven250sinfonie',
-  },
-  {
-    'titolo': 'Benjamin Britten: musica per gli esseri umani',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/brittenmusicaumani',
-  },
-  {
-    'titolo': 'Charles Ives – I Songs, la Concord Sonata e la musica per organo',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/charles-ives-songs-concord-organo',
-  },
-  {
-    'titolo': 'Claudio Monteverdi: il creatore della musica moderna',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/monteverdicreatoremusicamoderna',
-  },
-  {
-    'titolo': 'Da George Gershwin al jazz e ritorno',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/george-gershwin-jazz',
-  },
-  {
-    'titolo': 'Dante in musica',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/dantemusica',
-  },
-  {
-    'titolo': 'David Oistrakh: una vita tra arte e politica',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/david-oistrakh',
-  },
-  {
-    'titolo': 'Debussy: gli scritti sulla musica',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/debussy-musica',
-  },
-  {
-    'titolo': 'Debussy: La Biografia',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/debussybiografia',
-  },
-  {
-    'titolo': 'Debussy: gli scritti sulla musica',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/debussy-musica',
-  },
-  {
-    'titolo': 'Dialogo della musica antica e della moderna',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/dialogo-della-musica-antica-e-della-moderna',
-  },
-  {
-    'titolo': 'Domenico Scarlatti',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/domenicoscarlatti',
-  },
-  {
-    'titolo': 'È scherzo od è follia',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/e-scherzo-od-e-follia',
-  },
-  {
-    'titolo': 'Eccellenti musici',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/eccellenti-musici',
-  },
-  {
-    'titolo': 'Ferruccio Busoni. Cultore del passato',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/ferruccio-busoni-cultore-del-passato',
-  },
-  {
-    'titolo': 'Filosofia con delitto.',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/filosofia-con-delitto',
-  },
-  {
-    'titolo': 'Gavin Bryars in Toscana',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/bryarstoscano',
-  },
-  {
-    'titolo': 'Gershwin: Porgy and Bess e il Song-Book del 1932',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/gershwin-porgy-bess',
-  },
-  {
-    'titolo': 'Giacomo Puccini: testimonianze, lettere, esecuzioni',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/puccinitestimonianze',
-  },
-  {
-    'titolo': 'Gioachino Rossini 150',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/rossini150',
-  },
-  {
-    'titolo': 'Gli antenati di Giacomo Puccini',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/antenatipuccini',
-  },
-  {
-    'titolo': 'Haendel: un poliglotta nell’Europa del ‘700',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/haendelpoliglotta700',
-  },
-  {
-    'titolo': 'Haydn musicista moderno',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/haydnmusicistamoderno',
-  },
-  {
-    'titolo': 'Hoffmann 250',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/hoffmann250',
-  },
-  {
-    'titolo': 'I 25 anni della Camerata strumentale',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/25camp',
-  },
-  {
-    'titolo': 'I nomi della musica: Francesco FIlidei',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/i-nomi-della-musica-francesco-filidei',
-  },
-  {
-    'titolo': 'Il cane da tartufi – Autori dimenticati',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/il-cane-da-tartufi-autori-dimenticati',
-  },
-  {
-    'titolo': 'Il Clavicembalo ben temperato. Un mito senza tempo',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/clavicembalosenzatempo',
-  },
-  {
-    'titolo': 'Il maestro già martellava il pianoforte – Vita e musica di Giacomo Puccini',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/maestropuccinivita',
-  },
-  {
-    'titolo': 'Il pianoforte ben temperato',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/il-pianoforte-ben-temperato',
-  },
-  {
-    'titolo': 'Il Suono dei secoli',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/il-suono-dei-secoli',
-  },
-  {
-    'titolo': 'Il teatro musicale di Ferruccio Busoni',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/il-teatro-musicale-di-ferruccio-busoni',
-  },
-  {
-    'titolo': 'L’antichità moderna di David Munrow',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/lantichita-moderna-di-david-munrow',
-  },
-  {
-    'titolo': 'L’occidente d’oro. Puccini e il Nuovo Mondo',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/loccidente-doro-puccini-e-il-nuovo-mondo',
-  },
-  {
-    'titolo': 'L’arte dei King’s Singers',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/kingssingers',
-  },
-  {
-    'titolo': 'L’arte invisibile',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/arteinvisibile',
-  },
-  {
-    'titolo': 'La musica per pianoforte di Prokof’ev',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/pianoforteprokofev',
-  },
-  {
-    'titolo': 'La poesia di Emily Dickinson e la musica americana del Novecento',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/emily-dickinson',
-  },
-  {
-    'titolo': 'La storia messa in musica',
-    'feed': '	https://www.retetoscanaclassica.it/feed/podcast/la-storia-messa-in-musica-antoni-gaudi',
-  },
-  {
-    'titolo': 'Le campane di Tosca',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/le-campane-di-tosca',
-  },
-  {
-    'titolo': 'Le origini del concerto pianistico',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/concertopianistico',
-  },
-  {
-    'titolo': 'Luce di Taglio',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/luceditaglio',
-  },
-  {
-    'titolo': 'Mulier Musica: Chiarina',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/chiarinaschumann',
-  },
-  {
-    'titolo': 'Mulier Musiche: Musica Celeste',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/muliermusiche',
-  },
-  {
-    'titolo': 'Music Comedies. Storia del teatro comico musicale inglese',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/music-comedies-storia-del-teatro-comico-musicale-inglese',
-  },
-  {
-    'titolo': 'Musica nova: voci innovative dal passato',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/musicanova',
-  },
-  {
-    'titolo': 'Nino Rota, cent’anni dopo',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/nino-rota-100',
-  },
-  {
-    'titolo': 'Notturnalia. Suoni per le ore buie',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/notturnalia',
-  },
-  {
-    'titolo': 'Novità in Compact',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/novitaincompact',
-  },
-  {
-    'titolo': 'Ombre Bianche',
-    'feed': '	https://www.retetoscanaclassica.it/feed/podcast/ombrebianche',
-  },
-  {
-    'titolo': 'Paolo Poli legge Pellegrino Artusi',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/paolo-poli-legge-pellegrino-artusi',
-  },
-  {
-    'titolo': 'Parliamo di Musica',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/parliamodimusica',
-  },
-  {
-    'titolo': 'Partiture D’Europa',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/partitureeuropa',
-  },
-  {
-    'titolo': 'Pensieri Urbani',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/pensieri-urbani',
-  },
-  {
-    'titolo': 'Per Luciano Berio',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/per-luciano-berio',
-  },
-  {
-    'titolo': 'Piccolo dizionario della musica classica',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/dizionariomusicaclassica',
-  },
-  {
-    'titolo': 'Poulenc: l’ispirazione è qualcosa di misterioso',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/poulencispirazionemisteriosa',
-  },
-  {
-    'titolo': 'Rachmaninov: acciaio nelle mani, oro nel cuore',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/rachmaninovacciaio',
-  },
-  {
-    'titolo': 'Reich – Un maestro della contemporaneità',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/reich-un-maestro-della-contemporaneita',
-  },
-  {
-    'titolo': 'Ricordo di Marc Blitzstein',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/blitzstein',
-  },
-  {
-    'titolo': 'Senti qui',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/senti-qui',
-  },
-  {
-    'titolo': 'Sylvano Bussotti: Vita e Teatro',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/bussottivitaeteatro',
-  },
-  {
-    'titolo': 'Toscana delle Culture',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/toscanadelleculture',
-  },
-  {
-    'titolo': 'Trame culturali',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/trameculturali',
-  },
-  {
-    'titolo': 'Tutto lo splendore della musica strumentale',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/tutto-lo-splendore-della-musica-strumentale',
-  },
-  {
-    'titolo': 'Tutto Verdi',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/tutto-verdi',
-  },
-  {
-    'titolo': 'Un Solennissimo Strombettio',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/unsolennissimostrombettio',
-  },
-  {
-    'titolo': 'Viaggio musicale nel secolo breve. Le sinfonie di Dmitrij Šostakovič',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/viaggio-musicale-nel-secolo-breve',
-  },
-  {
-    'titolo': 'Viaggio nel mondo di Gustav Mahler',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/viaggio-nel-mondo-di-gustav-mahler',
-  },
-  {
-    'titolo': 'Virtuosissime',
-    'feed': 'https://www.retetoscanaclassica.it/feed/podcast/virtuosissime',
-  },
-];
+
 // ========================================
 
 Future<void> main() async {
@@ -612,31 +303,72 @@ class _PodcastPageState extends State<PodcastPage> {
     _programmiFuture = _caricaProgrammi();
   }
 
+   /// Scarica l'elenco delle serie dall'API di WordPress (SSP)
+  /// e per ognuna recupera la copertina dal feed RSS.
   Future<List<_ProgrammaConCopertina>> _caricaProgrammi() async {
-    final futures = PROGRAMMI.map((p) async {
+    // 1. Chiedi la lista delle serie a WordPress
+    final response = await http.get(
+      Uri.parse(
+          'https://www.retetoscanaclassica.it/wp-json/wp/v2/series?per_page=100'),
+      headers: {'User-Agent': 'RTCApp/1.0'},
+    ).timeout(const Duration(seconds: 15));
+
+    if (response.statusCode != 200) {
+      throw Exception(
+          "Impossibile caricare l'elenco dei programmi (${response.statusCode})");
+    }
+
+    final List data = jsonDecode(response.body);
+
+    // 2. Per ogni serie costruisci l'URL del feed RSS e scarica la copertina
+    final futures = data.map((s) async {
+      final slug = s['slug'] as String;
+      final titolo = _decodeHtmlEntities(s['name'] as String? ?? slug);
+      final feedUrl =
+          'https://www.retetoscanaclassica.it/feed/podcast/$slug';
+
       String? copertina;
       try {
-        final response = await http.get(
-          Uri.parse(p['feed']!),
+        final feedResp = await http.get(
+          Uri.parse(feedUrl),
           headers: {
             'User-Agent': 'RTCApp/1.0',
             'Accept': 'application/rss+xml, application/xml, text/xml',
           },
         ).timeout(const Duration(seconds: 10));
-        if (response.statusCode == 200) {
-          final feed = RssFeed.parse(response.body);
+        if (feedResp.statusCode == 200) {
+          final feed = RssFeed.parse(feedResp.body);
           copertina = feed.image?.url ?? feed.itunes?.image?.href;
         }
       } catch (_) {
         // Se il feed non risponde, mostriamo l'icona di default
       }
+
       return _ProgrammaConCopertina(
-        titolo: p['titolo']!,
-        feedUrl: p['feed']!,
+        titolo: titolo,
+        feedUrl: feedUrl,
         copertina: copertina,
       );
     }).toList();
-    return Future.wait(futures);
+
+    final result = await Future.wait(futures);
+
+    // 3. Ordina alfabeticamente per titolo
+    result.sort((a, b) => a.titolo.toLowerCase().compareTo(b.titolo.toLowerCase()));
+    return result;
+  }
+
+  /// Converte entità HTML (es. &amp; &#8217;) in testo normale
+  String _decodeHtmlEntities(String input) {
+    return input
+        .replaceAll('&amp;', '&')
+        .replaceAll('&#039;', "'")
+        .replaceAll('&#8217;', '’')
+        .replaceAll('&#8216;', '‘')
+        .replaceAll('&quot;', '"')
+        .replaceAll('&lt;', '<')
+        .replaceAll('&gt;', '>')
+        .replaceAll('&nbsp;', ' ');
   }
 
   Future<void> _ricarica() async {
@@ -657,14 +389,36 @@ class _PodcastPageState extends State<PodcastPage> {
           );
         }
 
-        final programmi = snapshot.data ??
-            PROGRAMMI
-                .map((p) => _ProgrammaConCopertina(
-                      titolo: p['titolo']!,
-                      feedUrl: p['feed']!,
-                      copertina: null,
-                    ))
-                .toList();
+        if (snapshot.hasError) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline,
+                      size: 48, color: Colors.red),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Errore nel caricamento dei programmi.\\n${snapshot.error}',
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _ricarica,
+                    child: const Text('Riprova'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        final programmi = snapshot.data ?? [];
+
+        if (programmi.isEmpty) {
+          return const Center(child: Text('Nessun programma disponibile'));
+        }
 
         return RefreshIndicator(
           onRefresh: _ricarica,
@@ -682,7 +436,8 @@ class _PodcastPageState extends State<PodcastPage> {
                           width: 56,
                           height: 56,
                           color: BRAND_BLUE.withValues(alpha: 0.1),
-                          child: const Icon(Icons.podcasts, color: BRAND_BLUE),
+                          child: const Icon(Icons.podcasts,
+                              color: BRAND_BLUE),
                         )
                       : CachedNetworkImage(
                           width: 56,
@@ -746,7 +501,6 @@ class _ProgrammaConCopertina {
   });
 }
 
-// ---------- PAGINA EPISODI DI UN PROGRAMMA ----------
 // ---------- PAGINA EPISODI DI UN PROGRAMMA ----------
 class ProgrammaPage extends StatefulWidget {
   final String titolo;
