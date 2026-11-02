@@ -2,8 +2,6 @@ workflows:
   ios-workflow:
     name: iOS Workflow
     instance_type: mac_mini_m2
-    integrations:
-      app_store_connect: Rete Toscana Classica
     environment:
       flutter: stable
       xcode: latest
@@ -12,6 +10,10 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: it.retetoscanaclassica.myapp
+        provisioning_profiles:
+          - RTC App Store Profile # Metti il nome esatto che hai dato su Codemagic
+        certificates:
+          - rtc_distribution # Metti il nome esatto del certificato che hai su Codemagic
     scripts:
       - name: Set up code signing
         script: |
