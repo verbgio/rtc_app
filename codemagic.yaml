@@ -3,7 +3,7 @@ workflows:
     name: iOS Workflow
     instance_type: mac_mini_m2
     integrations:
-      app_store_connect: IlNomeDellaTuaChiave
+      app_store_connect: Rete Toscana Classica
     environment:
       flutter: stable
       xcode: latest
