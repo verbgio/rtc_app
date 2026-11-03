@@ -2,13 +2,6 @@ workflows:
   ios-workflow:
     name: iOS Workflow
     instance_type: mac_mini_m2
-    environment:
-      flutter: stable
-      xcode: latest
-workflows:
-  ios-workflow:
-    name: iOS Workflow
-    instance_type: mac_mini_m2
     integrations:
       app_store_connect: Rete Toscana Classica
     environment:
