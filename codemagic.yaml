@@ -16,9 +16,6 @@ workflows:
           xcode-project use-profiles
       - name: Build IPA
         script: |
-          xcode-project build-ipa \
-            --workspace "$CM_BUILD_DIR/ios/Runner.xcworkspace" \
-            --scheme "Runner"
+          flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
     artifacts:
       - build/ios/ipa/*.ipa
-      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.ipa
