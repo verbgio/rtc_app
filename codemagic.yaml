@@ -19,4 +19,4 @@ workflows:
           flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
-      - build/ios/ipa/*.ipa
+      - "**/*.ipa"
