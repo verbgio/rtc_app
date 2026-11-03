@@ -5,21 +5,21 @@ workflows:
     environment:
       flutter: stable
       xcode: latest
+workflows:
+  ios-workflow:
+    name: iOS Workflow
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: Rete Toscana Classica
+    environment:
+      flutter: stable
+      xcode: latest
       ios_signing:
-        provisioning_profiles:
-          - rtc_app_store_profile
-        certificates:
-          - rtc_distribution
+        distribution_type: app_store
+        bundle_identifier: it.retetoscanaclassica.myapp
     scripts:
-      - name: Set up code signing
-        script: |
-          xcode-project use-profiles
       - name: Build IPA
         script: |
-          flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
-      - name: Find IPA
-        script: |
-          find /Users/builder/clone/build -name "*.ipa"
+          flutter build ipa --release
     artifacts:
-      - $CM_BUILD_DIR/build/ios/ipa/*.ipa
       - build/ios/ipa/*.ipa
