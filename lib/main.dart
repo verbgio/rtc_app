@@ -237,6 +237,7 @@ class LivePage extends StatelessWidget {
         final state = snapshot.data;
         final playing = isLive && (state?.playing ?? false);
         final loading = isLive &&
+            !playing &&
             (state?.processingState == ProcessingState.loading ||
                 state?.processingState == ProcessingState.buffering);
 
@@ -400,7 +401,7 @@ class _PodcastPageState extends State<PodcastPage> {
                       size: 48, color: Colors.red),
                   const SizedBox(height: 12),
                   Text(
-                    'Errore nel caricamento dei programmi.\\n${snapshot.error}',
+                    'Errore nel caricamento dei programmi.\n${snapshot.error}',
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
@@ -1188,10 +1189,9 @@ class _PlayerPageState extends State<PlayerPage> {
                       builder: (context, snap) {
                         final state = snap.data;
                         final playing = state?.playing ?? false;
-                        final loading = state?.processingState ==
-                                ProcessingState.loading ||
-                            state?.processingState ==
-                                ProcessingState.buffering;
+                        final loading = !playing &&
+                            (state?.processingState == ProcessingState.loading ||
+                                state?.processingState == ProcessingState.buffering);
                         if (loading) {
                           return const SizedBox(
                             width: 64,
