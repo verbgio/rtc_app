@@ -17,6 +17,9 @@ workflows:
       - name: Build IPA
         script: |
           flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
+      - name: Find IPA
+        script: |
+          find /Users/builder/clone/build -name "*.ipa"
     artifacts:
       - $CM_BUILD_DIR/build/ios/ipa/*.ipa
       - build/ios/ipa/*.ipa
