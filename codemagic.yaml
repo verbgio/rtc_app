@@ -18,5 +18,5 @@ workflows:
         script: |
           flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
     artifacts:
+      - $CM_BUILD_DIR/build/ios/ipa/*.ipa
       - build/ios/ipa/*.ipa
-      - "**/*.ipa"
