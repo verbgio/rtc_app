@@ -306,8 +306,7 @@ class _PodcastPageState extends State<PodcastPage> {
 
    /// Scarica l'elenco delle serie dall'API di WordPress (SSP)
   /// e per ognuna recupera la copertina dal feed RSS.
-  Future<List<_ProgrammaConCopertina>> _caricaProgrammi() async {
-    // 1. Chiedi la lista delle serie a WordPress
+    Future<List<_ProgrammaConCopertina>> _caricaProgrammi() async {
     final response = await http.get(
       Uri.parse(
           'https://www.retetoscanaclassica.it/wp-json/wp/v2/series?per_page=100'),
@@ -320,42 +319,16 @@ class _PodcastPageState extends State<PodcastPage> {
     }
 
     final List data = jsonDecode(response.body);
-
-    // 2. Per ogni serie costruisci l'URL del feed RSS e scarica la copertina
-    final futures = data.map((s) async {
+    final result = data.map((s) {
       final slug = s['slug'] as String;
-      final titolo = _decodeHtmlEntities(s['name'] as String? ?? slug);
-      final feedUrl =
-          'https://www.retetoscanaclassica.it/feed/podcast/$slug';
-
-      String? copertina;
-      try {
-        final feedResp = await http.get(
-          Uri.parse(feedUrl),
-          headers: {
-            'User-Agent': 'RTCApp/1.0',
-            'Accept': 'application/rss+xml, application/xml, text/xml',
-          },
-        ).timeout(const Duration(seconds: 10));
-        if (feedResp.statusCode == 200) {
-          final feed = RssFeed.parse(feedResp.body);
-          copertina = feed.image?.url ?? feed.itunes?.image?.href;
-        }
-      } catch (_) {
-        // Se il feed non risponde, mostriamo l'icona di default
-      }
-
       return _ProgrammaConCopertina(
-        titolo: titolo,
-        feedUrl: feedUrl,
-        copertina: copertina,
+        titolo: _decodeHtmlEntities(s['name'] as String? ?? slug),
+        feedUrl: 'https://www.retetoscanaclassica.it/feed/podcast/$slug',
       );
     }).toList();
 
-    final result = await Future.wait(futures);
-
-    // 3. Ordina alfabeticamente per titolo
-    result.sort((a, b) => a.titolo.toLowerCase().compareTo(b.titolo.toLowerCase()));
+    result.sort(
+        (a, b) => a.titolo.toLowerCase().compareTo(b.titolo.toLowerCase()));
     return result;
   }
 
@@ -373,6 +346,7 @@ class _PodcastPageState extends State<PodcastPage> {
   }
 
   Future<void> _ricarica() async {
+    _coverCache.clear();
     setState(() {
       _programmiFuture = _caricaProgrammi();
     });
@@ -430,35 +404,7 @@ class _PodcastPageState extends State<PodcastPage> {
             itemBuilder: (context, i) {
               final p = programmi[i];
               return ListTile(
-                leading: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: p.copertina == null
-                      ? Container(
-                          width: 56,
-                          height: 56,
-                          color: BRAND_BLUE.withValues(alpha: 0.1),
-                          child: const Icon(Icons.podcasts,
-                              color: BRAND_BLUE),
-                        )
-                      : CachedNetworkImage(
-                          width: 56,
-                          height: 56,
-                          fit: BoxFit.cover,
-                          imageUrl: p.copertina!,
-                          placeholder: (_, _) => Container(
-                            width: 56,
-                            height: 56,
-                            color: BRAND_BLUE.withValues(alpha: 0.1),
-                          ),
-                          errorWidget: (_, _, _) => Container(
-                            width: 56,
-                            height: 56,
-                            color: BRAND_BLUE.withValues(alpha: 0.1),
-                            child: const Icon(Icons.podcasts,
-                                color: BRAND_BLUE),
-                          ),
-                        ),
-                ),
+                              leading: _CopertinaProgramma(feedUrl: p.feedUrl),
                 title: Text(
                   p.titolo,
                   style: const TextStyle(
@@ -486,6 +432,104 @@ class _PodcastPageState extends State<PodcastPage> {
           ),
         );
       },
+    );
+  }
+}
+final Map<String, String?> _coverCache = {};
+
+String? _estraiCopertina(String xml) {
+  final itunes = RegExp(r'<itunes:image[^>]*href="([^"]+)"').firstMatch(xml);
+  if (itunes != null) return itunes.group(1)!.replaceAll('&amp;', '&');
+  final img = RegExp(
+    r'<image>(?:(?!</image>)[\s\S])*?<url>\s*(?:<!\[CDATA\[)?\s*([^<\s\]]+)\s*(?:\]\]>)?\s*</url>',
+  ).firstMatch(xml);
+  return img?.group(1)?.replaceAll('&amp;', '&');
+}
+
+/// Legge solo l'inizio del feed (la copertina sta prima degli episodi).
+Future<String?> _caricaCopertina(String feedUrl) async {
+  if (_coverCache.containsKey(feedUrl)) return _coverCache[feedUrl];
+  final client = http.Client();
+  try {
+    final request = http.Request('GET', Uri.parse(feedUrl))
+      ..headers['User-Agent'] = 'RTCApp/1.0'
+      ..headers['Accept'] = 'application/rss+xml, application/xml, text/xml';
+    final response =
+        await client.send(request).timeout(const Duration(seconds: 10));
+    if (response.statusCode != 200) return null;
+
+    final buffer = StringBuffer();
+    await for (final chunk
+        in response.stream.transform(const Utf8Decoder(allowMalformed: true))) {
+      buffer.write(chunk);
+      final testo = buffer.toString();
+      final fineHead = testo.indexOf('<item');
+      final head = fineHead == -1 ? testo : testo.substring(0, fineHead);
+      final url = _estraiCopertina(head);
+      if (url != null || fineHead != -1 || buffer.length > 60000) {
+        _coverCache[feedUrl] = url;
+        return url;
+      }
+    }
+    _coverCache[feedUrl] = null;
+    return null;
+  } catch (_) {
+    return null;
+  } finally {
+    client.close();
+  }
+}
+
+class _CopertinaProgramma extends StatefulWidget {
+  final String feedUrl;
+  const _CopertinaProgramma({required this.feedUrl});
+
+  @override
+  State<_CopertinaProgramma> createState() => _CopertinaProgrammaState();
+}
+
+class _CopertinaProgrammaState extends State<_CopertinaProgramma> {
+  late final Future<String?> _future;
+
+  @override
+  void initState() {
+    super.initState();
+    _future = _caricaCopertina(widget.feedUrl);
+  }
+
+  Widget _segnaposto({bool icona = false}) => Container(
+        width: 56,
+        height: 56,
+        color: BRAND_BLUE.withValues(alpha: 0.1),
+        child: icona ? const Icon(Icons.podcasts, color: BRAND_BLUE) : null,
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: FutureBuilder<String?>(
+        future: _future,
+        initialData: _coverCache[widget.feedUrl],
+        builder: (context, snap) {
+          final url = snap.data;
+          if (url == null) {
+            return _segnaposto(
+                icona: snap.connectionState == ConnectionState.done);
+          }
+          return CachedNetworkImage(
+            imageUrl: url,
+            width: 56,
+            height: 56,
+            fit: BoxFit.cover,
+            memCacheWidth: 168,
+            memCacheHeight: 168,
+            fadeInDuration: const Duration(milliseconds: 150),
+            placeholder: (_, _) => _segnaposto(),
+            errorWidget: (_, _, _) => _segnaposto(icona: true),
+          );
+        },
+      ),
     );
   }
 }
@@ -681,6 +725,7 @@ class _ProgrammaPageState extends State<ProgrammaPage> {
                 child: (feed.immagine != null)
                     ? CachedNetworkImage(
                         imageUrl: feed.immagine!,
+                        memCacheWidth: 288,
                         width: 96,
                         height: 96,
                         fit: BoxFit.cover,
@@ -811,6 +856,7 @@ class _ProgrammaPageState extends State<ProgrammaPage> {
                                 height: 64,
                                 fit: BoxFit.cover,
                                 imageUrl: e['immagine']!,
+                                memCacheWidth: 192,
                                 placeholder: (_, _) => Container(
                                   width: 64,
                                   height: 64,
@@ -923,7 +969,6 @@ class _ProgrammaPageState extends State<ProgrammaPage> {
 }
 
 // ---------- PAGINA DI RIPRODUZIONE EPISODIO ----------
-// ---------- PAGINA DI RIPRODUZIONE EPISODIO ----------
 class PlayerPage extends StatefulWidget {
   final AudioPlayer player;
   final String titolo;
@@ -1016,6 +1061,7 @@ class _PlayerPageState extends State<PlayerPage> {
                             widget.immagine!.isNotEmpty)
                         ? CachedNetworkImage(
                             imageUrl: widget.immagine!,
+                            memCacheWidth: 660,
                             width: 220,
                             height: 220,
                             fit: BoxFit.cover,
