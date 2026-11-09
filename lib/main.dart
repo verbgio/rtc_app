@@ -12,7 +12,7 @@ import 'position_store.dart';
 const String STREAM_URL = 'https://nr12.newradio.it/stream/8744'; // <-- il tuo URL streaming reale
 const String RADIO_NAME = 'RTC';
 
-const Color BRAND_BLUE = Color.fromARGB(255, 4, 118, 248);
+const Color BRAND_BLUE = Color(0xFF00679c);
 const Color BRAND_LIGHT_BLUE = Color.fromARGB(255, 246, 247, 248);
 
 
