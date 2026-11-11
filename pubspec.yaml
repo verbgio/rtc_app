@@ -11,6 +11,8 @@ dependencies:
     sdk: flutter
   just_audio: ^0.9.36
   just_audio_background: ^0.0.1-beta.11
+  audio_session: ^0.1.25
+  path_provider: ^2.1.0
   http: ^1.1.0
   webfeed: ^0.7.0
   cached_network_image: ^3.3.0

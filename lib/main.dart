@@ -7,6 +7,9 @@ import 'package:http/http.dart' as http;
 import 'package:webfeed/webfeed.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'position_store.dart';
+import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 // ============ CONFIGURAZIONE ============
 const String STREAM_URL = 'https://nr12.newradio.it/stream/8744'; // <-- il tuo URL streaming reale
@@ -18,13 +21,23 @@ const Color BRAND_LIGHT_BLUE = Color.fromARGB(255, 246, 247, 248);
 
 // ========================================
 
+// ... altri import ...
+
+Future<Uri> getLogoUri() async {
+  final byteData = await rootBundle.load('assets/logo.png');
+  final buffer = byteData.buffer;
+  final tempDir = await getTemporaryDirectory();
+  final file = File('${tempDir.path}/rtc_logo.png');
+  await file.writeAsBytes(buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+  return file.uri;
+}
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await JustAudioBackground.init(
     androidNotificationChannelId: 'it.rtc.app.channel.audio',
     androidNotificationChannelName: 'Riproduzione RTC',
     androidNotificationOngoing: true,
-  );
+    );
   runApp(const RtcApp());
 }
 
@@ -107,29 +120,34 @@ class _HomePageState extends State<HomePage> {
     }
   }
   
- Future<void> _toggleLive() async {
-    final isLiveCurrent = _currentEpisodeUrl == null;
-    if (isLiveCurrent && _player.playing) {
-      await _player.pause();
-    } else {
-      if (!isLiveCurrent || _player.audioSource == null) {
-        _currentEpisodeUrl = null;
-        await _player.stop();
-        await _player.setAudioSource(
-          AudioSource.uri(
-            Uri.parse(STREAM_URL),
-            tag: MediaItem(
-              id: 'live',
-              title: '$RADIO_NAME - Live',
-              artist: RADIO_NAME,
-            ),
+  Future<void> _toggleLive() async {
+  final isLiveCurrent = _currentEpisodeUrl == null;
+  if (isLiveCurrent && _player.playing) {
+    await _player.pause();
+  } else {
+    if (!isLiveCurrent || _player.audioSource == null) {
+      _currentEpisodeUrl = null;
+      await _player.stop();
+
+      // 1. Ottieni l'URI del logo (file temporaneo)
+      final logoUri = await getLogoUri(); 
+
+      await _player.setAudioSource(
+        AudioSource.uri(
+          Uri.parse(STREAM_URL),
+          tag: MediaItem(
+            id: 'live',
+            title: '$RADIO_NAME - Live',
+            artist: RADIO_NAME,
+            artUri: logoUri, // 2. Passa l'URI qui
           ),
-        );
-      }
-      _player.play();
+        ),
+      );
     }
-    setState(() {});
+    _player.play();
   }
+  setState(() {});
+}
 
   Future<void> _playEpisode(Map<String, String> e) async {
     final url = e['url']!;
