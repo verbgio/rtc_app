@@ -1,7 +1,7 @@
 name: rtc_app
 description: "App della radio RTC"
 publish_to: 'none'
-version: 1.0.2+6
+version: 1.0.3+7
 
 environment:
   sdk: ^3.13.5
@@ -10,7 +10,6 @@ dependencies:
   flutter:
     sdk: flutter
   just_audio: ^0.9.36
-  just_audio_background: ^0.0.1-beta.11
   audio_session: ^0.1.25
   path_provider: ^2.1.0
   http: ^1.1.0
@@ -18,6 +17,7 @@ dependencies:
   cached_network_image: ^3.3.0
   shared_preferences: ^2.2.2
   cupertino_icons: ^1.0.8
+  audio_service: ^0.18.19
 
 dev_dependencies:
   flutter_test:

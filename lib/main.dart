@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_background/just_audio_background.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:webfeed/webfeed.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -10,6 +10,7 @@ import 'position_store.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:audio_session/audio_session.dart';
 
 // ============ CONFIGURAZIONE ============
 const String STREAM_URL = 'https://nr12.newradio.it/stream/8744'; // <-- il tuo URL streaming reale
@@ -18,6 +19,63 @@ const String RADIO_NAME = 'RTC';
 const Color BRAND_BLUE = Color(0xFF00679c);
 const Color BRAND_LIGHT_BLUE = Color.fromARGB(255, 246, 247, 248);
 
+final AudioPlayer appPlayer = AudioPlayer();
+late RtcAudioHandler audioHandler;
+
+class RtcAudioHandler extends BaseAudioHandler with SeekHandler {
+  final AudioPlayer _player;
+
+  RtcAudioHandler(this._player) {
+    _player.playbackEventStream.map(_stato).pipe(playbackState);
+  }
+
+  PlaybackState _stato(PlaybackEvent event) {
+    return PlaybackState(
+      // Un solo tasto: pausa quando suona, play quando è fermo
+      controls: [
+        if (_player.playing) MediaControl.pause else MediaControl.play,
+      ],
+      systemActions: const {
+        MediaAction.seek,
+        MediaAction.seekForward,
+        MediaAction.seekBackward,
+      },
+      androidCompactActionIndices: const [0],
+      processingState: const {
+        ProcessingState.idle: AudioProcessingState.idle,
+        ProcessingState.loading: AudioProcessingState.loading,
+        ProcessingState.buffering: AudioProcessingState.buffering,
+        ProcessingState.ready: AudioProcessingState.ready,
+        ProcessingState.completed: AudioProcessingState.completed,
+      }[_player.processingState]!,
+      playing: _player.playing,
+      updatePosition: _player.position,
+      bufferedPosition: _player.bufferedPosition,
+      speed: _player.speed,
+      queueIndex: event.currentIndex,
+    );
+  }
+
+  @override
+  Future<void> play() async {
+    // Dalla notifica, la diretta riparte dal vivo e non da audio vecchio
+    if (mediaItem.value?.id == 'live' && !_player.playing) {
+      await _player.stop();
+      await _player.setAudioSource(AudioSource.uri(Uri.parse(STREAM_URL)));
+    }
+    await _player.play();
+  }
+
+  @override
+  Future<void> pause() => _player.pause();
+
+  // Lo "stop" diventa una semplice pausa: la notifica resta attiva
+  @override
+  Future<void> stop() => _player.pause();
+
+  @override
+  Future<void> seek(Duration position) => _player.seek(position);
+}
 
 // ========================================
 
@@ -33,11 +91,17 @@ Future<Uri> getLogoUri() async {
 }
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'it.rtc.app.channel.audio',
-    androidNotificationChannelName: 'Riproduzione RTC',
-    androidNotificationOngoing: true,
-    );
+  final session = await AudioSession.instance;
+  await session.configure(const AudioSessionConfiguration.music());
+  audioHandler = await AudioService.init<RtcAudioHandler>(
+    builder: () => RtcAudioHandler(appPlayer),
+    config: const AudioServiceConfig(
+      androidNotificationChannelId: 'it.rtc.app.channel.audio',
+      androidNotificationChannelName: 'Riproduzione RTC',
+      androidNotificationOngoing: false,
+      androidStopForegroundOnPause: false,
+    ),
+  );
   runApp(const RtcApp());
 }
 
@@ -89,7 +153,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _index = 0;
-  final _player = AudioPlayer();
+  final _player = appPlayer;
   final _positionStore = PositionStore();
   String? _currentEpisodeUrl;
     Timer? _saveTimer;
@@ -120,34 +184,27 @@ class _HomePageState extends State<HomePage> {
     }
   }
   
-  Future<void> _toggleLive() async {
-  final isLiveCurrent = _currentEpisodeUrl == null;
-  if (isLiveCurrent && _player.playing) {
-    await _player.pause();
-  } else {
-    if (!isLiveCurrent || _player.audioSource == null) {
+   Future<void> _toggleLive() async {
+    final isLiveCurrent = _currentEpisodeUrl == null;
+    if (isLiveCurrent && _player.playing) {
+      await _player.pause();
+    } else {
       _currentEpisodeUrl = null;
       await _player.stop();
 
-      // 1. Ottieni l'URI del logo (file temporaneo)
-      final logoUri = await getLogoUri(); 
+      final logoUri = await getLogoUri();
 
-      await _player.setAudioSource(
-        AudioSource.uri(
-          Uri.parse(STREAM_URL),
-          tag: MediaItem(
-            id: 'live',
-            title: '$RADIO_NAME - Live',
-            artist: RADIO_NAME,
-            artUri: logoUri, // 2. Passa l'URI qui
-          ),
-        ),
-      );
+      audioHandler.mediaItem.add(MediaItem(
+        id: 'live',
+        title: '$RADIO_NAME - Live',
+        artist: RADIO_NAME,
+        artUri: logoUri,
+      ));
+      await _player.setAudioSource(AudioSource.uri(Uri.parse(STREAM_URL)));
+      _player.play();
     }
-    _player.play();
+    setState(() {});
   }
-  setState(() {});
-}
 
   Future<void> _playEpisode(Map<String, String> e) async {
     final url = e['url']!;
@@ -159,19 +216,18 @@ class _HomePageState extends State<HomePage> {
 
       _currentEpisodeUrl = url;
       await _player.stop();
-      await _player.setAudioSource(
-        AudioSource.uri(
-          Uri.parse(url),
-          tag: MediaItem(
-            id: url,
-            title: e['titolo'] ?? 'Episodio',
-            artist: RADIO_NAME,
-            artUri: (e['immagine']?.isNotEmpty ?? false)
-                ? Uri.parse(e['immagine']!)
-                : null,
-          ),
-        ),
+            final item = MediaItem(
+        id: url,
+        title: e['titolo'] ?? 'Episodio',
+        artist: RADIO_NAME,
+        artUri: (e['immagine']?.isNotEmpty ?? false)
+            ? Uri.parse(e['immagine']!)
+            : null,
       );
+      audioHandler.mediaItem.add(item);
+      final duration =
+          await _player.setAudioSource(AudioSource.uri(Uri.parse(url)));
+      audioHandler.mediaItem.add(item.copyWith(duration: duration));
 
       // Riprendi dalla posizione salvata, se sensata
       final saved = await _positionStore.getPosition(url);
@@ -295,7 +351,6 @@ class LivePage extends StatelessWidget {
   }
 }
 
-// ---------- PAGINA PODCAST (LISTA PROGRAMMI) ----------
 // ---------- PAGINA PODCAST (LISTA PROGRAMMI CON COPERTINE) ----------
 class PodcastPage extends StatefulWidget {
   final AudioPlayer player;
@@ -556,6 +611,7 @@ class _ProgrammaConCopertina {
   final String titolo;
   final String feedUrl;
   final String? copertina;
+  
 
   _ProgrammaConCopertina({
     required this.titolo,
