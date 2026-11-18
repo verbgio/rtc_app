@@ -29,17 +29,21 @@ class RtcAudioHandler extends BaseAudioHandler with SeekHandler {
     _player.playbackEventStream.map(_stato).pipe(playbackState);
   }
 
-  PlaybackState _stato(PlaybackEvent event) {
+    PlaybackState _stato(PlaybackEvent event) {
+    final isLive = mediaItem.value?.id == 'live';
+
     return PlaybackState(
-      // Un solo tasto: pausa quando suona, play quando è fermo
       controls: [
         if (_player.playing) MediaControl.pause else MediaControl.play,
       ],
-      systemActions: const {
-        MediaAction.seek,
-        MediaAction.seekForward,
-        MediaAction.seekBackward,
-      },
+      // Se è la diretta, niente azioni di seek (niente barra di scorrimento)
+      systemActions: isLive
+          ? const {}
+          : const {
+              MediaAction.seek,
+              MediaAction.seekForward,
+              MediaAction.seekBackward,
+            },
       androidCompactActionIndices: const [0],
       processingState: const {
         ProcessingState.idle: AudioProcessingState.idle,
@@ -49,8 +53,9 @@ class RtcAudioHandler extends BaseAudioHandler with SeekHandler {
         ProcessingState.completed: AudioProcessingState.completed,
       }[_player.processingState]!,
       playing: _player.playing,
-      updatePosition: _player.position,
-      bufferedPosition: _player.bufferedPosition,
+      // Se è la diretta, inviamo posizione zero per nascondere i tempi vuoti
+      updatePosition: isLive ? Duration.zero : _player.position,
+      bufferedPosition: isLive ? Duration.zero : _player.bufferedPosition,
       speed: _player.speed,
       queueIndex: event.currentIndex,
     );
@@ -184,7 +189,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
   
-   Future<void> _toggleLive() async {
+     Future<void> _toggleLive() async {
     final isLiveCurrent = _currentEpisodeUrl == null;
     if (isLiveCurrent && _player.playing) {
       await _player.pause();
@@ -196,8 +201,8 @@ class _HomePageState extends State<HomePage> {
 
       audioHandler.mediaItem.add(MediaItem(
         id: 'live',
-        title: '$RADIO_NAME - Live',
-        artist: RADIO_NAME,
+        title: 'Rete Toscana Classica in diretta', // <-- Titolo modificato
+        artist: '', // <-- Artista svuotato
         artUri: logoUri,
       ));
       await _player.setAudioSource(AudioSource.uri(Uri.parse(STREAM_URL)));
